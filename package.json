@@ -1,0 +1,17 @@
+{
+  "name": "authme-api",
+  "version": "0.0.1",
+  "description": "Custom user authentication for Node.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "authentication"
+  ],
+  "author": "Alberto D.Sosa <albertodsosa@gmail.com>",
+  "license": "MIT",
+  "dependencies": {
+    "express": "^4.16.4"
+  }
+}
