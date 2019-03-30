@@ -1,10 +1,12 @@
 {
   "name": "authme-api",
-  "version": "0.0.1",
+  "version": "0.1.0",
   "description": "Custom user authentication for Node.",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node index.js",
+    "dev": "nodemon index.js --watch libs/"
   },
   "keywords": [
     "authentication"
@@ -12,6 +14,14 @@
   "author": "Alberto D.Sosa <albertodsosa@gmail.com>",
   "license": "MIT",
   "dependencies": {
-    "express": "^4.16.4"
+    "basic-auth": "^2.0.1",
+    "bcrypt": "^3.0.5",
+    "express": "^4.16.4",
+    "uniqid": "^5.0.3",
+    "validator": "^10.11.0"
+  },
+  "devDependencies": {
+    "casual": "^1.6.0",
+    "nodemon": "^1.18.10"
   }
 }
