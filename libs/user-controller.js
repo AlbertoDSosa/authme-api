@@ -15,18 +15,24 @@ const findUser = (user, prop = '_id') => {
 }
 
 const createUser = (user, res) => {
-  user['_id'] = uniqId();
+  bcrypt.hash(user.password, 8)
+    .then(hash => {
+      // assign id
+      user['_id'] = uniqId();
+      // encrypt password
+      user['password'] = hash;
+      // write user
+      database(user);
+      // clear password
+      user.password = undefined;
+      // send response message
+      res({
+        message: 'User registered successfully',
+        user
+      })
+    })
+    .catch(err => console.log)
 
-  bcrypt.hash(user.password, 8, (err, hash) => {
-    if(err) {
-      res.json(500).json(err);
-    };
-    user['password'] = hash;
-    database(user);
-    res
-      .status(201)
-      .json({message: 'User registered successfully'});
-  });
 }
 
 const getUsers = () => {

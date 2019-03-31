@@ -19,9 +19,13 @@ app.post('/singup', (req, res) => {
 });
 
 app.get('/singin', (req, res) => {
-    let user = req.headers.authorization;
+    let user = {
+      password: req.headers.password,
+      email: req.headers.email
+    };
+
     auth
-      .singIn(user, res)
+      .singIn(user)
       .then(resp => {
         res.status(200).json(resp);
       })

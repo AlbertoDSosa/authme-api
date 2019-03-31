@@ -3,7 +3,6 @@
 const validator = require('validator');
 const User = require('./user-controller');
 const bcrypt = require('bcrypt');
-const auth = require('basic-auth');
 
 const requiredUserProperties = ['username', 'email', 'password'];
 const validateType = (user) => {
@@ -31,16 +30,10 @@ const existingUserProperty = (user, prop) => {
   return user;
 }
 const existingUser = (user, prop) => {
-  let dbUser = User.find(user, prop);
-  if(!dbUser) {
-    throw `The ${prop} ${dbUser.email} does no exists`;
-  }
-
-  return dbUser;
+  return User.find(user, prop);
 }
 
-const comparePassword = (user) => {
-  let dbUser = existingUser(user, 'email');
+const comparePassword = (user, dbUser) => {
   return bcrypt.compare(user.password , dbUser.password); 
 }
 
@@ -59,19 +52,19 @@ const minPasswordCharacthers = (user) => {
   return user;
 }
 
-const _user = async (user, action) => {
+module.exports = async (user, action) => {
   if(action === 'singin') {
-    user = auth.parse(user);
+    // Check email
+    user = await checkEmail(user);
+    let dbUser = await existingUser(user, 'email');
 
-    let parsedUser = {
-      password: user.pass,
-      email: user.name
+    if(!dbUser) {
+      throw `The email ${user.email} does no exists`;
     }
-
-    parsedUser = await checkEmail(parsedUser);
     
+    // check password
     let resp;
-    await comparePassword(parsedUser)
+    await comparePassword(user, dbUser)
       .then(res => {
         resp = res;
       })
@@ -85,18 +78,15 @@ const _user = async (user, action) => {
   }
   
   if(action === 'singup') {
-    user = await validateType(user);
-    user = await validateRequiredProps(user);
+    user = validateType(user);
+    user = validateRequiredProps(user);
     user = await existingUserProperty(user, 'email');
     user = await existingUserProperty(user, 'username');
     user = await checkEmail(user);
     user = await minPasswordCharacthers(user);
   }
 
-
   return user;
 }
 
-module.exports = {
-  _user
-};
+
