@@ -29,6 +29,7 @@ const existingUserProperty = (user, prop) => {
   }
   return user;
 }
+
 const existingUser = (user, prop) => {
   return User.find(user, prop);
 }
@@ -53,9 +54,11 @@ const minPasswordCharacthers = (user) => {
 }
 
 module.exports = async (user, action) => {
+  user = validateType(user);
+  user = checkEmail(user);
+
   if(action === 'singin') {
     // Check email
-    user = await checkEmail(user);
     let dbUser = await existingUser(user, 'email');
 
     if(!dbUser) {
@@ -63,26 +66,24 @@ module.exports = async (user, action) => {
     }
     
     // check password
-    let resp;
-    await comparePassword(user, dbUser)
-      .then(res => {
-        resp = res;
-      })
-      .catch(err => console.log(err));
+    // let resp;
+    // await comparePassword(user, dbUser)
+      // .then(res => {
+      //   resp = res;
+      // })
+      // .catch(err => console.log(err));
 
-    if(!resp) {
+    if(!await comparePassword(user, dbUser)) {
       throw 'Password does not match'
     }
 
-    return 'You have successfully logged in'
+    return 'You have successfully logged in';
   }
   
   if(action === 'singup') {
-    user = validateType(user);
     user = validateRequiredProps(user);
     user = await existingUserProperty(user, 'email');
     user = await existingUserProperty(user, 'username');
-    user = await checkEmail(user);
     user = await minPasswordCharacthers(user);
   }
 

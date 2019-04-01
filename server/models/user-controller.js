@@ -15,7 +15,7 @@ const findUser = (user, prop = '_id') => {
 }
 
 const createUser = (user, res) => {
-  bcrypt.hash(user.password, 8)
+  bcrypt.hash(user.password, 10)
     .then(hash => {
       // assign id
       user['_id'] = uniqId();
