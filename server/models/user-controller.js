@@ -23,16 +23,17 @@ const createUser = (user, res) => {
       user['password'] = hash;
       // write user
       database(user);
-      // clear password
+      // clear password and id
       user.password = undefined;
+      user._id = undefined;
+
       // send response message
       res({
         message: 'User registered successfully',
-        user
+        data: user,
+        status: '200 ok!'
       })
-    })
-    .catch(err => console.log)
-
+    });
 }
 
 const getUsers = () => {

@@ -6,25 +6,29 @@ const auth = require('../models/user-auth');
 router.post('/singup', (req, res) => {
   let body = req.body;
     auth
-    .singUp(body, res)
+    .singUp(body, (resp)=> {
+      res.status(201).json(resp);
+    })
     .catch((err) => {
-        res.json(err)
+        res.status(400).json({
+          menssage: err,
+          status: '400 bad request!'
+        })
     });
   });
   
 router.get('/singin', (req, res) => {
-let user = {
-  password: req.headers.password,
-  email: req.headers.email
-};
-
+let authParams = req.body;
 auth
-  .singIn(user)
+  .singIn(authParams)
   .then(resp => {
-  res.status(200).json(resp);
+    res.status(200).json(resp);
   })
   .catch((err) => {
-    res.json(err)
+    res.status(400).json({
+      menssage: err,
+      status: '400 bad request!'
+    });
   });
 });
 
