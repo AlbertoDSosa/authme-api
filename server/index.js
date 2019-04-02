@@ -11,11 +11,11 @@ server.use(express.json());
 server.use((err, req, res, next) => {
   if (err) {
     err['SyntaxError'] = undefined;
-    res.json(err);
+    res.status(400).json(err);
   } else {
     next()
   }
-})
+});
 
 server.use(require('./routes'));
 

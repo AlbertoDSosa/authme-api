@@ -16,20 +16,20 @@ router.post('/singup', (req, res) => {
         })
     });
   });
-  
-router.get('/singin', (req, res) => {
-let authParams = req.body;
-auth
-  .singIn(authParams)
-  .then(resp => {
-    res.status(200).json(resp);
-  })
-  .catch((err) => {
-    res.status(400).json({
-      menssage: err,
-      status: '400 bad request!'
+
+router.post('/singin', (req, res) => {
+  let authParams = req.body;
+  auth
+    .singIn(authParams)
+    .then(resp => {
+      res.status(200).json(resp);
+    })
+    .catch((err) => {
+      res.status(400).json({
+        menssage: err,
+        status: '400 bad request!'
+      });
     });
-  });
 });
 
 module.exports = router;

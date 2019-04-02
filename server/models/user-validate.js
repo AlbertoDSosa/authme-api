@@ -3,6 +3,7 @@
 const validator = require('validator');
 const User = require('./user-controller');
 const bcrypt = require('bcrypt');
+const isEmpty = require('lodash').isEmpty;
 
 const requiredSingUpProps = ['username', 'email', 'password'];
 const requiredSingInProps = ['email', 'password'];
@@ -10,6 +11,13 @@ const requiredSingInProps = ['email', 'password'];
 const validateType = (user) => {
   if(typeof user !== 'object' || Array.isArray(user)) {
     throw 'The user shold be a object';
+  }
+  return user;
+}
+
+const validateIsEmptyUser = (user) => {
+  if(isEmpty(user)){
+    throw 'The request must contain a user'
   }
   return user;
 }
@@ -32,11 +40,11 @@ const validateUserPropsValue = (user, actionProps) => {
   return user;
 }
 
-const existingUserProperty = (user, prop) => {
-  let dbUser = User.find(user, prop);
-
-  if(dbUser) {
-    throw `The ${prop} ${user[prop]} already exists`;
+const existingUserProperty = (user) => {
+  for(let key in user) {
+    if(User.find(user, key)) {
+      throw `The ${key} ${user[key]} already exists`;
+    }
   }
   return user;
 }
@@ -96,14 +104,14 @@ const singup = async (user) => {
   user = validateRequiredProps(user, requiredSingUpProps);
   user = validateUserPropsValue(user, requiredSingUpProps);
   user = checkEmail(user);
-  user = await existingUserProperty(user, 'email');
-  user = await existingUserProperty(user, 'username');
+  user = await existingUserProperty(user);
   user = await minPasswordCharacthers(user);
   return user;
 }
 
 module.exports = async (user, action) => {
   user = validateType(user);
+  user = validateIsEmptyUser(user);
   
   if(action === 'singin') {
     return await singin(user);
